@@ -56,6 +56,7 @@ int music = 0;
 double sum = 0; 
 void setup() {
     //Serial.begin(115200);
+    pinMode(A0, INPUT);
     delay( 3000 ); // power-up safety delay
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness(  BRIGHTNESS );            // wait to get reference voltage stabilized
