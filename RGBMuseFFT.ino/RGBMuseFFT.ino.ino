@@ -29,8 +29,8 @@ SOFTWARE.
 #define SPEC_PART 2
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
-#define SILENCE_THRESHOLD 25
-#define SILENCE_THRESHOLD_VALUE 8
+#define SILENCE_THRESHOLD 100
+#define SILENCE_THRESHOLD_VALUE 10
 #define FFT_OFFSET 2
 #define B_OFFSET 80
 
@@ -47,6 +47,7 @@ double vReal[SAMPLES];
 double vImag[SAMPLES];
 uint16_t data_avgs[NUM_LEDS];
 byte iter=0;
+uint8_t bb;
 arduinoFFT FFT = arduinoFFT();  
 
 static const CRGBPalette16 currentPalette= RainbowColors_p;
@@ -111,13 +112,14 @@ void loop() {
       {
         val+=vReal[i];                       
       }
-    *brightness = val*AMP_FAC/(SAMPLES/SPEC_PART-FFT_OFFSET);
+    *brightness = constrain(int(val*AMP_FAC/(SAMPLES/SPEC_PART-FFT_OFFSET)),0,255);
     }
 
     
-    
+    //bb=*brightness;
     Serial.println(*brightness);
     if (iter == SILENCE_THRESHOLD) {
+      //Serial.println(sum/SILENCE_THRESHOLD);
       if (sum/SILENCE_THRESHOLD < SILENCE_THRESHOLD_VALUE*AMP_FAC) {
         music=48;
         //Serial.println("music off");
@@ -136,7 +138,7 @@ void loop() {
     iter++;
 if (music > 48) {
      // -- send to display according measured value 
-    startIndex = startIndex + 3; /* motion speed */
+    startIndex = startIndex + 2; /* motion speed */
     //FastLED.delay(1000 / UPDATES_PER_SECOND);
 } else {
   *brightness = (uint8_t) BRIGHTNESS;
